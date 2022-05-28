@@ -17,6 +17,8 @@ bg = np.flip(bg, axis=1)
 
 while(cap.isOpned()):
     ret, img = cap.read()
+    frame = cv2.resize(frame, (640, 480))
+    image = cv2.resize(image, (640, 480))
     if not ret:
         break
 
@@ -24,9 +26,13 @@ while(cap.isOpned()):
 
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
-    l_black = np.array([104, 153, 70])
-    u_black = np.array([30, 30, 0])
-    mask = cv2.inRange(hsv, l_black, u_black)
+    u_black = np.array([104, 153, 70])
+    l_black = np.array([30, 30, 0])
+    mask = cv2.inRange(frame, l_black, u_black)
+    res = cv2.bitwise_and(frame, frame, mask = mask)
+    
+    f = frame - res
+    f = np.where(f == 0, image, f)
 
     mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, np.ones((3, 3), np.uint8))
     mask = cv2.morphologyEx(mask, cv2.MORPH_DILATE, np.ones((3, 3), np.uint8))
@@ -44,15 +50,3 @@ while(cap.isOpned()):
 cap.release()
 out.release()
 cv2.destroyAllWindows()
-
-#frame = cv2.resize(frame, (640, 480))
-#image = cv2.resize(image, (640, 480))
-
-#u_black = np.array([104,153, 70])
-#l_black = np.array([30, 30, 0])
-
-#mask = cv2.inRange(frame, l_black, u_black)
-#res = cv2.bitwise_and(frame, frame, mask = mask)
-
-#f = frame - res
-#f = np.where(f == 0, image, f)
